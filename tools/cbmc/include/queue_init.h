@@ -6,7 +6,10 @@
    leads to a problem space explosion. Therefore, we use this stub
    and a separated proof on prvCopyDataToQueue to deal with it.
    As prvNotifyQueueSetContainer is disabled if configUSE_QUEUE_SETS != 1,
-   in other cases the original implementation should be used. */
+   in other cases the original implementation should be used.
+
+   The original function does not have any side effects apart from changing its
+   arguments. */
 #if( configUSE_QUEUE_SETS == 1 )
 	BaseType_t prvCopyDataToQueue( Queue_t * const pxQueue, const void *pvItemToQueue, const BaseType_t xPosition )
 	{
