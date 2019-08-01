@@ -29,7 +29,7 @@
 	}
 #endif
 
-/* xQueueCreateSet is compiled out if configUSE_QUEUE_SETS != 1.*/
+/* xQueueCreateSet is compiled out if configUSE_QUEUE_SETS != 1. */
 #if( configUSE_QUEUE_SETS == 1 )
 	QueueSetHandle_t xUnconstrainedQueueSet()
 	{
