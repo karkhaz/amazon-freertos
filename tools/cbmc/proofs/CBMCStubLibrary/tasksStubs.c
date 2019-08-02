@@ -36,12 +36,5 @@ void vInitTaskCheckForTimeOut(BaseType_t maxCounter, BaseType_t maxCounter_limit
    max TASK_STUB_COUNTER_LIMIT iterations.*/
 BaseType_t xTaskCheckForTimeOut( TimeOut_t * const pxTimeOut, TickType_t * const pxTicksToWait ) {
 	++xCounter;
-	if(xCounter == xCounterLimit)
-	{
-		return pdTRUE;
-	}
-	else
-	{
-		return nondet();
-	}
+  return xCounter == xCounterLimit ? pdTRUE : nondet();
 }
