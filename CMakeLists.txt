@@ -13,6 +13,11 @@ set(PROJECT_VERSION_MINOR "00")
 # Import global configurations.
 include("tools/cmake/afr.cmake")
 
+# Allow FreeRTOS code to be built with CBMC on non-windows platforms
+if("${CBMC}")
+  include_directories("${CMAKE_SOURCE_DIR}/tools/cbmc/windows")
+endif()
+
 # Add 3rdparty modules.
 add_subdirectory("libraries/3rdparty")
 
@@ -131,6 +136,86 @@ endif()
 # -------------------------------------------------------------------------------------------------
 # Output metadata information
 # -------------------------------------------------------------------------------------------------
+
+
+message("Cache includes")
+message("     $CACHE{AFR_MODULE_https_INCLUDES_ALL}")
+message("")
+message("test $CACHE{AFR_MODULE_test_https_INCLUDES_ALL}")
+message("")
+message("demo $CACHE{AFR_MODULE_demo_https_INCLUDES_ALL}")
+message("")
+message("")
+message("Cache sources")
+message("     $CACHE{AFR_MODULE_https_SOURCES_ALL}")
+message("")
+message("test $CACHE{AFR_MODULE_test_https_SOURCES_ALL}")
+message("")
+message("demo $CACHE{AFR_MODULE_demo_https_SOURCES_ALL}")
+message("")
+message("")
+message("Cache depends")
+message("     $CACHE{AFR_MODULE_https_DEPENDS_ALL}")
+message("")
+message("test $CACHE{AFR_MODULE_test_https_DEPENDS_ALL}")
+message("")
+message("demo $CACHE{AFR_MODULE_demo_https_DEPENDS_ALL}")
+message("")
+message("")
+message("")
+message("")
+
+message("Target Includes")
+message("===============")
+get_target_property(inc_dir AFR::https INCLUDE_DIRECTORIES)
+message("https includes: ${inc_dir}")
+
+get_target_property(inc_dir AFR::kernel INCLUDE_DIRECTORIES)
+message("")
+message("kernel includes: ${inc_dir}")
+
+get_target_property(inc_dir AFR::common INCLUDE_DIRECTORIES)
+message("")
+message("common includes: ${inc_dir}")
+
+get_target_property(inc_dir AFR::freertos INTERFACE_INCLUDE_DIRECTORIES)
+message("")
+message("freertos includes: ${inc_dir}")
+
+get_target_property(inc_dir AFR::kernel::mcu_port INTERFACE_INCLUDE_DIRECTORIES)
+message("")
+message("mcu_port includes: ${inc_dir}")
+
+add_executable(
+  http-proof
+  EXCLUDE_FROM_ALL
+  "${CMAKE_CURRENT_SOURCE_DIR}/libraries/c_sdk/standard/https/cbmc/IotHttpsClient_AddHeader_harness.c"
+  "${CMAKE_CURRENT_SOURCE_DIR}/libraries/c_sdk/standard/https/src/iot_https_client.c"
+)
+
+set(
+  http_includes
+  "$<TARGET_PROPERTY:AFR::https,INCLUDE_DIRECTORIES>"
+)
+
+list(APPEND
+  http_includes
+  "${CMAKE_SOURCE_DIR}/libraries/freertos_plus/standard/freertos_plus_tcp/include"
+  "${CMAKE_SOURCE_DIR}/libraries/c_sdk/standard/https/src/private"
+  "${CMAKE_SOURCE_DIR}/tools/cbmc/proofs/HTTP"
+)
+
+set_target_properties(
+  http-proof
+  PROPERTIES
+  INCLUDE_DIRECTORIES "${http_includes}"
+)
+
+
+add_custom_target(
+  genexdebug
+  COMMAND ${CMAKE_COMMAND} -E echo '"$<TARGET_PROPERTY:http-proof,INCLUDE_DIRECTORIES>"')
+
 if(AFR_METADATA_MODE)
     afr_write_metadata()
 endif()

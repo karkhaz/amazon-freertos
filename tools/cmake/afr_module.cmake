@@ -101,6 +101,22 @@ function(afr_demo_module)
     set(AFR_CURRENT_MODULE ${module_name} PARENT_SCOPE)
 endfunction()
 
+
+# Define a CBMC module.
+function(afr_cbmc_module)
+    if(${ARGC} EQUAL 1)
+        set(module_name ${ARGV0})
+    else()
+        get_filename_component(module_name "${CMAKE_CURRENT_LIST_DIR}" NAME)
+    endif()
+    set(module_name cbmc_${module_name})
+    afr_module(NAME ${module_name} INTERFACE)
+
+    # Set current module name.
+    set(AFR_CURRENT_MODULE ${module_name} PARENT_SCOPE)
+endfunction()
+
+
 # Define a test module.
 function(afr_test_module)
     if(${ARGC} EQUAL 1)
@@ -156,6 +172,7 @@ function(__afr_module_prop arg_module arg_prop_type)
     endif()
 
     set(prop_all_var AFR_MODULE_${arg_module}_${arg_prop_type}_ALL)
+    message("kk setting " AFR_MODULE_${arg_module}_${arg_prop_type}_ALL)
     if(NOT DEFINED ${prop_all_var})
         set(${prop_all_var} "" CACHE INTERNAL "")
     endif()
